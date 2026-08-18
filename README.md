@@ -109,8 +109,40 @@ $$
 
 
 ```python
-# Write your code here
+# -------------------------------------------------
+# Monte Carlo Control
+# -------------------------------------------------
 
+epsilon = epsilon_start
+
+for episode_idx in range(num_episodes):
+    episode = generate_episode(epsilon)
+
+    # Calculate returns (G) for each state-action pair in the episode
+    G = 0
+    for t in reversed(range(len(episode))):
+        state, action, reward = episode[t]
+        G = reward + gamma * G
+
+        # Check if the (state, action) pair is encountered for the first time in the episode
+        # (First-visit Monte Carlo)
+        first_visit = True
+        for prev_t in range(t):
+            prev_state, prev_action, _ = episode[prev_t]
+            if state == prev_state and action == prev_action:
+                first_visit = False
+                break
+
+        if first_visit:
+            # Update Q-value
+            Q[state, action] = Q[state, action] + alpha * (G - Q[state, action])
+
+    # Store total reward for the episode
+    total_episode_reward = sum([reward for _, _, reward in episode])
+    episode_rewards.append(total_episode_reward)
+
+    # Epsilon decay
+    epsilon = max(epsilon_min, epsilon * epsilon_decay)
 
 
 ```
@@ -119,49 +151,54 @@ $$
 
 ## Output
 
-```text
+```
+
 Final Q-table:
-
-
+[[0.748 0.811 0.766 0.773]
+ [0.709 0.    0.84  0.659]
+ [0.713 0.858 0.748 0.703]
+ [0.757 0.    0.44  0.363]
+ [0.749 0.819 0.    0.73 ]
+ [0.    0.    0.    0.   ]
+ [0.    0.967 0.    0.849]
+ [0.    0.    0.    0.   ]
+ [0.791 0.    0.902 0.688]
+ [0.863 0.971 0.87  0.   ]
+ [0.888 0.989 0.    0.961]
+ [0.    0.    0.    0.   ]
+ [0.    0.    0.    0.   ]
+ [0.    0.867 0.988 0.964]
+ [0.98  0.99  1.    0.979]
+ [0.    0.    0.    0.   ]]
 
 Estimated State-Value Function:
-
-
-
-
-
-
+[[0.811 0.84  0.858 0.757]
+ [0.819 0.    0.967 0.   ]
+ [0.902 0.971 0.989 0.   ]
+ [0.    0.988 1.    0.   ]]
+Name: Hanshika Varthini R
+Register Number:   212223240046   
 
 Learned Policy:
+[['D' 'R' 'D' 'L']
+ ['D' 'L' 'D' 'L']
+ ['R' 'D' 'D' 'L']
+ ['L' 'R' 'R' 'L']]
 
-
-
-
-
-Average reward over last 1000 episodes: 
+Average reward over last 1000 episodes: 0.945
 ```
+<img width="452" height="646" alt="image" src="https://github.com/user-attachments/assets/fb990d71-876a-46aa-b640-9d75f085ee3b" />
 
+<img width="779" height="532" alt="image" src="https://github.com/user-attachments/assets/712340c4-3ded-4db2-a972-90025cd06362" />
 
----
+<img width="388" height="474" alt="image" src="https://github.com/user-attachments/assets/e9488f2d-1136-46c3-9e92-f3c5309ebb2f" />
+
+<img width="554" height="380" alt="image" src="https://github.com/user-attachments/assets/98c2bed9-8697-4095-9745-2d8c24f8209c" />
 
 ## Result
-```text
-
-
-
-```
----
+Thus, the On-Policy Monte Carlo Control algorithm was successfully implemented, and the optimal policy and value function were obtained using the Gymnasium environment.
 
 ## Inference
-```text
+The on-policy Monte Carlo control method effectively enabled the agent to learn from episodic experiences. By maintaining an epsilon-greedy policy, the agent successfully balanced exploration and exploitation, leading to convergence toward the optimal policy and improved cumulative rewards over time.
 
-
-
-```
-
-
-
-
-
----
 
